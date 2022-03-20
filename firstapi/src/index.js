@@ -12,12 +12,34 @@ const server = http.createServer((request, response) => {
   console.log(`Request methor: ${request.method} / Endpoint: ${parsedUrl.pathname}`);
   const parsedSearchParams = Object.fromEntries(parsedUrl.searchParams)
 
+  let { pathname } = parsedUrl
+  let id = null
+
+  /**
+   * .filter((routeItem) => Boolean(routeItem))
+   * or
+   * filter(Boolean)
+   */
+  const splitEndpoint = pathname.split('/').filter(Boolean)
+
+  if (splitEndpoint.length > 1) {
+    pathname = `/${splitEndpoint[0]}/:id`
+    id = splitEndpoint[1]
+  }
+
   const route = routes.find((routeObj) => (
-    routeObj.endpoint === parsedUrl.pathname && routeObj.method === request.method
+    routeObj.endpoint === pathname && routeObj.method === request.method
   ))
 
   if (route) {
+    // Injetando informaçoes no response da api
     request.query = parsedSearchParams
+    request.params = { id }
+    response.send = (statusCode, body) => {
+      response.writeHead(statusCode, { 'Content-Type': 'application/json' });
+      response.end(JSON.stringify(body))
+    }
+
     route.handler(request, response)
   } else {
     response.writeHead(404, { 'Content-Type': 'text/html' });
