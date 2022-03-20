@@ -24,6 +24,34 @@ module.exports = {
     response.send(200, user)
   },
 
+  createUser(request, response) {
+    /**
+     * Recebendo o body do Post
+     * As mensagens do body sao enviadas aos poucos(streams)
+     * entao e preciso criar um event list para ficar ouvindo as mensagens
+     */
+    let body = ''
+
+    request.on('data', (chunk) => {
+      body += chunk
+    })
+
+    request.on('end', () => {
+      //Criando novo usuário
+      body = JSON.parse(body)
+
+      const lastUserId = users[users.length - 1].id
+      const newUser = {
+        id: lastUserId + 1,
+        name: body.name
+      }
+
+      users.push(newUser)
+      response.send(200, newUser)
+    })
+
+  },
+
   listProdutos(request, response) {
     const { order } = request.query
 
