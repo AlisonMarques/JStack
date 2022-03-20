@@ -22,16 +22,18 @@ const server = http.createServer((request, response) => {
    * filter(Boolean)
    */
   const splitEndpoint = pathname.split('/').filter(Boolean)
-
+  //Pegando o id que é passado no endpoint apos a barra
   if (splitEndpoint.length > 1) {
     pathname = `/${splitEndpoint[0]}/:id`
     id = splitEndpoint[1]
   }
 
+  //Verifico se existe o endpoint e pathname existente dentro das minhas rotas
   const route = routes.find((routeObj) => (
     routeObj.endpoint === pathname && routeObj.method === request.method
   ))
 
+  //Faz a injençao quando encontra uma rota
   if (route) {
     // Injetando informaçoes no response da api
     request.query = parsedSearchParams
