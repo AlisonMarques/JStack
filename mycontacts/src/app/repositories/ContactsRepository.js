@@ -31,6 +31,30 @@ class ContactsRepository {
     });
   }
 
+  findByEmail(email) {
+    return new Promise((resolve) => {
+      const oneContact = contacts.find((contact) => contact.email === email);
+      resolve(oneContact);
+    });
+  }
+
+  create({
+    name, email, phone, category_id,
+  }) {
+    return new Promise((resolve) => {
+      const newContact = {
+        id: v4(),
+        name,
+        email,
+        phone,
+        category_id,
+      };
+
+      contacts.push(newContact);
+      resolve(newContact);
+    });
+  }
+
   delete(id) {
     return new Promise((resolve) => {
       // Trazer todos os itens que seja diferente do id passado para deletar
