@@ -1,5 +1,7 @@
 const { v4 } = require('uuid');
 
+const db = require('../../database');
+
 let contacts = [
   {
     id: v4(),
@@ -38,21 +40,28 @@ class ContactsRepository {
     });
   }
 
-  create({
+  async create({
     name, email, phone, category_id,
   }) {
-    return new Promise((resolve) => {
-      const newContact = {
-        id: v4(),
-        name,
-        email,
-        phone,
-        category_id,
-      };
+    /**
+     * [FORMA COM BAIXA SEGURANÇA] - INSERT INTO contacts(name, email, phone,
+     * category_id) VALUES('${name}', '${email}', '${phone}', '${category_id}')
+     *
+     * [FORMA MAIS SEGURA] - INSERT INTO contacts(name, email, phone, category_id)
+     *  VALUES($1, $2, $3, $4)`, [name, email, phone, category_id]
+     *
+     * Os dolares($) são binds do postgres que evita o problema de SQL Injections.
+     * Dessa forma estamos deixando mais seguro.
+     * Passamos o array para informar as variáveis que vamos setar no sql
+     *
+     * RETURNING -> serve para retornar os campos que queremos após o INSERT
+     */
+    const [row] = await db.query(`INSERT INTO contacts(name, email, phone, category_id)
+    VALUES($1, $2, $3, $4)
+    RETURNING *
+    `, [name, email, phone, category_id]);
 
-      contacts.push(newContact);
-      resolve(newContact);
-    });
+    return row;
   }
 
   update(id, {
