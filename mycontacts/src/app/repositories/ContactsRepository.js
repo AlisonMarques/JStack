@@ -20,8 +20,14 @@ let contacts = [
 ];
 
 class ContactsRepository {
-  async findAll() {
-    const rows = db.query('SELECT * FROM contacts');
+  async findAll(orderBy = 'ASC') {
+    // Quando usado toUpperCase() é necessário passar um valor padrão na variavel
+    // Exemplo: orderBy = 'ASC'
+
+    // Tratando o que é passado na query para nao ter perigo de sql injection
+    const direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+
+    const rows = db.query(`SELECT * FROM contacts ORDER BY name ${direction}`);
     return rows;
   }
 
