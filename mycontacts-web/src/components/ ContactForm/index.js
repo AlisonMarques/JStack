@@ -9,13 +9,15 @@ import Select from '../Select';
 import Button from '../Button';
 
 import isEmailValid from '../../utils/isEmailValid';
+import useErrors from '../../hooks/useErrors';
 
 export default function ContactForm({ buttonLabel }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [fone, setFone] = useState('');
   const [category, setCategory] = useState('');
-  const [errors, setErrors] = useState([]);
+
+  const { setError, removeError, getErrorMessageByFieldName } = useErrors();
 
   function handleNameChange(event) {
     setName(event.target.value);
@@ -25,20 +27,9 @@ export default function ContactForm({ buttonLabel }) {
      * dentro de name ainda nesta função.
     */
     if (!event.target.value) {
-      /**
-       * Com o prevState mantemos todos os dados antigos do array
-       * e assim não sobrepomos dados.
-       * Add erro quando o nome não for preenchido.
-       */
-      setErrors((prevState) => [
-        ...prevState,
-        { field: 'name', message: 'Nome é obrigatório.' },
-      ]);
+      setError({ field: 'name', message: 'Nome é obrigatório.' });
     } else {
-      // Removendo do array de errors quando estiver preenchido.
-      setErrors((prevState) => prevState.filter(
-        (error) => error.field !== 'name',
-      ));
+      removeError('name');
     }
   }
 
@@ -47,29 +38,10 @@ export default function ContactForm({ buttonLabel }) {
 
     // Verificando se foi informado um e-mail e se ele é válido.
     if (event.target.value && !isEmailValid(event.target.value)) {
-      /**
-       * Verificando se já existe um erro com field email
-       * para não concatenar vários erros de email a cada letra digitada
-       */
-      const errorAlreadyExists = errors.find((error) => error.field === 'email');
-      if (errorAlreadyExists) {
-        return;
-      }
-
-      setErrors((prevState) => [
-        ...prevState,
-        { field: 'email', message: 'E-mail inválido.' },
-      ]);
+      setError({ field: 'email', message: 'E-mail inválido.' });
     } else {
-      setErrors((prevState) => prevState.filter(
-        (error) => error.field !== 'email',
-      ));
+      removeError('email');
     }
-  }
-
-  function getErrorMessageByFieldName(fieldName) {
-    // Buscando a messagem de erro pelo fieldName
-    return errors.find((error) => error.field === fieldName)?.message;
   }
 
   function handleSubmit(event) {
