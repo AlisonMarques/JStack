@@ -9,6 +9,7 @@ import Select from '../Select';
 import Button from '../Button';
 
 import isEmailValid from '../../utils/isEmailValid';
+import formatPhone from '../../utils/formatPhone';
 import useErrors from '../../hooks/useErrors';
 
 export default function ContactForm({ buttonLabel }) {
@@ -44,20 +45,24 @@ export default function ContactForm({ buttonLabel }) {
     }
   }
 
+  function handlePhoneChange(event) {
+    setFone(formatPhone(event.target.value));
+  }
+
   function handleSubmit(event) {
     // Previne o comportamento padrão do formulário para que execute o javascript da função.
     event.preventDefault();
 
-    console.log({
-      name,
-      email,
-      fone,
-      category,
-    });
+    // console.log({
+    //   name,
+    //   email,
+    //   fone,
+    //   category,
+    // });
   }
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit} noValidate>
       <FormGroup
         error={getErrorMessageByFieldName('name')}
       >
@@ -73,6 +78,7 @@ export default function ContactForm({ buttonLabel }) {
         error={getErrorMessageByFieldName('email')}
       >
         <Input
+          type="email"
           placeholder="E-mail"
           error={getErrorMessageByFieldName('email')}
           value={email}
@@ -84,7 +90,8 @@ export default function ContactForm({ buttonLabel }) {
         <Input
           placeholder="Telefone"
           value={fone}
-          onChange={(event) => setFone(event.target.value)}
+          onChange={handlePhoneChange}
+          maxLength="15"
         />
       </FormGroup>
 
