@@ -57,3 +57,12 @@ export default function Home() {
     </Container>
   );
 }
+
+
+fetch('http://localhost:3000/contacts')
+  .then((response) => {
+    console.log('response', response);
+  })
+  .catch((err) => {
+    console.log('error', err);
+  });
