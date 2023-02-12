@@ -8,13 +8,15 @@ import {
 import arrow from '../../assets/images/icons/arrow.svg';
 import edit from '../../assets/images/icons/edit.svg';
 import trash from '../../assets/images/icons/trash.svg';
-// import Loader from '../../components/Loader';
+import Loader from '../../components/Loader';
+import delay from '../../utils/delay';
 // import Modal from '../../components/Modal';
 
 export default function Home() {
   const [contacts, setContacts] = useState([]);
   const [orderBy, setOrderBy] = useState('asc');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   // useMemo vai armazenar o valor de filteredContacts e só vai reexecutar o código
   // quando for alterado o valor de contacts ou searchTerm
@@ -27,15 +29,18 @@ export default function Home() {
   )), [contacts, searchTerm]);
 
   useEffect(() => {
+    setIsLoading(true);
     fetch(`http://localhost:3000/contacts?orderBy=${orderBy}`)
       .then(async (response) => {
+        await delay(2000);
+
         const json = await response.json();
-        console.log('response', json);
         setContacts(json);
       })
       .catch((err) => {
         console.log('error', err);
-      });
+      })
+      .finally(() => setIsLoading(false));
   }, [orderBy]);
 
   function handleToggleOrderBy() {
@@ -53,7 +58,8 @@ export default function Home() {
   return (
     <Container>
       {/* <Modal danger /> */}
-      {/* <Loader /> */}
+      <Loader isLoading={isLoading} />
+
       <InputSearchContainer>
         <input
           type="text"
