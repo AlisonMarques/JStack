@@ -9,7 +9,9 @@ import arrow from '../../assets/images/icons/arrow.svg';
 import edit from '../../assets/images/icons/edit.svg';
 import trash from '../../assets/images/icons/trash.svg';
 import Loader from '../../components/Loader';
-import delay from '../../utils/delay';
+
+import ContactsService from '../../services/ContactsService';
+
 // import Modal from '../../components/Modal';
 
 export default function Home() {
@@ -29,18 +31,19 @@ export default function Home() {
   )), [contacts, searchTerm]);
 
   useEffect(() => {
-    setIsLoading(true);
-    fetch(`http://localhost:3000/contacts?orderBy=${orderBy}`)
-      .then(async (response) => {
-        await delay(2000);
+    async function loadContacts() {
+      try {
+        setIsLoading(true);
+        const contactsList = await ContactsService.listContacts(orderBy);
+        setContacts(contactsList);
+      } catch (error) {
+        console.log('error', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
 
-        const json = await response.json();
-        setContacts(json);
-      })
-      .catch((err) => {
-        console.log('error', err);
-      })
-      .finally(() => setIsLoading(false));
+    loadContacts();
   }, [orderBy]);
 
   function handleToggleOrderBy() {
