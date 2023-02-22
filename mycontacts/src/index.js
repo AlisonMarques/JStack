@@ -2,8 +2,8 @@ const express = require('express');
 // Necessário para error assincronos
 require('express-async-errors');
 
-const cors = require('./app/middlewares/cors')
-const errorHandler = require('./app/middlewares/errorHandler')
+const cors = require('./app/middlewares/cors');
+const errorHandler = require('./app/middlewares/errorHandler');
 
 const routes = require('./routes');
 
@@ -14,8 +14,8 @@ const app = express();
 // Permitindo que a api receba objetos no body
 app.use(express.json());
 
-//middleware cors
-app.use(cors)
+// middleware cors
+app.use(cors);
 
 app.use(routes);
 
