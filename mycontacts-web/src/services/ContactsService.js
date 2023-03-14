@@ -5,8 +5,9 @@ class ContactsService {
     this.httpClient = new HttpClient('http://localhost:3000');
   }
 
+  // 478fb3a3-e6df-48f5-9950-9a2335101a25
   async listContacts(orderBy = 'asc') {
-    return this.httpClient.get(`/contacts?orderBy=${orderBy}`);
+    return this.httpClient.get(`/contacts/?orderBy=${orderBy}`);
   }
 }
 
