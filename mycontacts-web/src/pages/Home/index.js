@@ -11,6 +11,7 @@ import {
   Card,
   ErrorContainer,
   EmptyListContainer,
+  SearchNotFoundContainer,
 } from './styles';
 
 import arrow from '../../assets/images/icons/arrow.svg';
@@ -18,6 +19,7 @@ import edit from '../../assets/images/icons/edit.svg';
 import trash from '../../assets/images/icons/trash.svg';
 import sad from '../../assets/images/sad.svg';
 import emptyBox from '../../assets/images/emptyBox.svg';
+import magnifierQuestion from '../../assets/images/magnifierQuestion.svg';
 
 import Loader from '../../components/Loader';
 import Button from '../../components/Button';
@@ -141,6 +143,18 @@ export default function Home() {
             </EmptyListContainer>
           )}
 
+          {contacts.length > 0 && filteredContacts.length < 1 && (
+            <SearchNotFoundContainer>
+              <img src={magnifierQuestion} alt="Magnifier Question" />
+
+              <span>
+                Nenhum resultado foi encontrado para
+                {' '}
+                <strong>{searchTerm}</strong>
+                .
+              </span>
+            </SearchNotFoundContainer>
+          )}
 
           {filteredContacts.length > 0 && (
             <ListHeader orderBy={orderBy}>
