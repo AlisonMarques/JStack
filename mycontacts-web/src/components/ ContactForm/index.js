@@ -13,10 +13,10 @@ import formatPhone from '../../utils/formatPhone';
 import useErrors from '../../hooks/useErrors';
 import CategoriesService from '../../services/CategoriesService';
 
-export default function ContactForm({ buttonLabel }) {
+export default function ContactForm({ buttonLabel, onSubmit }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [fone, setFone] = useState('');
+  const [phone, setPhone] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [categories, setCategories] = useState([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
@@ -69,19 +69,19 @@ export default function ContactForm({ buttonLabel }) {
   }
 
   function handlePhoneChange(event) {
-    setFone(formatPhone(event.target.value));
+    setPhone(formatPhone(event.target.value));
   }
 
   function handleSubmit(event) {
     // Previne o comportamento padrão do formulário para que execute o javascript da função.
     event.preventDefault();
 
-    // console.log({
-    //   name,
-    //   email,
-    //   fone,
-    //   category,
-    // });
+    onSubmit({
+      name,
+      email,
+      phone,
+      categoryId,
+    });
   }
 
   return (
@@ -112,7 +112,7 @@ export default function ContactForm({ buttonLabel }) {
       <FormGroup>
         <Input
           placeholder="Telefone"
-          value={fone}
+          value={phone}
           onChange={handlePhoneChange}
           maxLength="15"
         />
@@ -150,4 +150,5 @@ export default function ContactForm({ buttonLabel }) {
 
 ContactForm.propTypes = {
   buttonLabel: PropTypes.node.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
