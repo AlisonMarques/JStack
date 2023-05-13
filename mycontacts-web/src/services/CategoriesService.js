@@ -6,7 +6,7 @@ class CategoriesService {
   }
 
   // 478fb3a3-e6df-48f5-9950-9a2335101a25
-  async listCategories() {
+  listCategories() {
     return this.httpClient.get('/categories');
   }
 }

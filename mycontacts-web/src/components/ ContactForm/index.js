@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import {
+  useEffect, useState, forwardRef, useImperativeHandle,
+} from 'react';
 import PropTypes from 'prop-types';
 
 import { ButtonContainer, Form } from './styles';
@@ -13,7 +15,8 @@ import formatPhone from '../../utils/formatPhone';
 import useErrors from '../../hooks/useErrors';
 import CategoriesService from '../../services/CategoriesService';
 
-export default function ContactForm({ buttonLabel, onSubmit }) {
+// forwardRef é utilizado para que o componente possa receber uma referência
+const ContactForm = forwardRef(({ buttonLabel, onSubmit }, ref) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -30,6 +33,23 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
   } = useErrors();
 
   const isFormValid = (name && errors.length === 0);
+
+  // useImperativeHandle passando os valores do componente pai para o filho(ContactForm)
+  useImperativeHandle(ref, () => ({
+    // Montando função com objeto da referência para ser enviado para o component pai
+    setFieldsValues: (contact) => {
+      setName(contact.name ?? '');
+      setEmail(contact.email ?? '');
+      setPhone(formatPhone(contact.phone ?? ''));
+      setCategoryId(contact.category_id ?? '');
+    },
+    resetFields: () => {
+      setName('');
+      setEmail('');
+      setPhone('');
+      setCategoryId('');
+    },
+  }), []);
 
   useEffect(() => {
     async function loadCategories() {
@@ -85,11 +105,6 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
       phone,
       categoryId,
     });
-
-    setName('');
-    setEmail('');
-    setPhone('');
-    setCategoryId('');
 
     setIsSubmitting(false);
   }
@@ -160,9 +175,11 @@ export default function ContactForm({ buttonLabel, onSubmit }) {
       </ButtonContainer>
     </Form>
   );
-}
+});
 
 ContactForm.propTypes = {
   buttonLabel: PropTypes.node.isRequired,
   onSubmit: PropTypes.func.isRequired,
 };
+
+export default ContactForm;
