@@ -29,6 +29,13 @@ class HttpClient {
     });
   }
 
+  delete(path, options) {
+    return this.makeRequest(path, {
+      method: 'DELETE',
+      headers: options?.headers,
+    });
+  }
+
   async makeRequest(path, options) {
     await delay(2000);
 
@@ -63,7 +70,7 @@ class HttpClient {
     // Verificando se o conteúdo da resposta é um JSON
     // antes de fazer um parse
     const contentType = response.headers.get('content-type');
-    if (contentType.includes('application/json')) {
+    if (contentType?.includes('application/json')) {
       responseBody = await response.json();
     }
 
