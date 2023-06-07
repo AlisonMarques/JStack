@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export default function useErrors() {
   const [errors, setErrors] = useState([]);
 
-  function setError({ field, message }) {
+  const setError = useCallback(({ field, message }) => {
     /**
     * Verificando se já existe um erro através do field
     * para não concatenar vários erros a cada letra digitada
@@ -22,19 +22,21 @@ export default function useErrors() {
       ...prevState,
       { field, message },
     ]);
-  }
+  }, [errors]);
 
-  function removeError(fieldName) {
+  const removeError = useCallback((fieldName) => {
     // Removendo do array de errors
     setErrors((prevState) => prevState.filter(
       (error) => error.field !== fieldName,
     ));
-  }
+  }, []);
 
-  function getErrorMessageByFieldName(fieldName) {
-    // Buscando a messagem de erro pelo fieldName
-    return errors.find((error) => error.field === fieldName)?.message;
-  }
+  const getErrorMessageByFieldName = useCallback(
+    (fieldName) => (
+      // Buscando a messagem de erro pelo fieldName
+      errors.find((error) => error.field === fieldName)?.message),
+    [errors],
+  );
 
   return {
     errors,
